@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Auto Save",
+	"Description": "An automated Auto Save solution",
+	"Category": "Load & Save",
+	"CreatedBy": "Nurullah ÇİTİL",
+	"CreatedByURL": "https://github.com/Parad0x84",
+	"DocsURL": "https://github.com/Parad0x84/AutoSavePlugin_UnrealEngine",
+	"MarketplaceURL": "",
+	"SupportURL": "mailto:nurullahcitil1536@gmail.com?subject=Auto%20Save%20plugin%20support",
+	"EngineVersion": "5.0.0",
+	"CanContainContent": false,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "AutoSave",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
