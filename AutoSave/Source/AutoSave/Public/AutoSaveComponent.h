@@ -46,7 +46,7 @@ public:
 
 private:
 	// Config variable
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config | General", SaveGame, BlueprintSetter = "SetEnabled", meta = (AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config | General", SaveGame, BlueprintSetter = "SetEnabled", meta = (AllowPrivateAccess))
 		bool bEnabled;
 	
 public:
@@ -57,33 +57,33 @@ public:
 
 	
 	// Config variables
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config | General", SaveGame)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config | General", SaveGame)
 		bool bLoadAndSaveOtherComponents;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config | General", SaveGame)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config | General", SaveGame)
 		EAutoSaveGroup AutoLoadGroup;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config | General", SaveGame)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config | General", SaveGame)
 		EAutoSaveGroup AutoSaveGroup;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config | Placed", SaveGame)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config | Placed", SaveGame)
 		bool bSavePlacedActorWhenDestroyedBeforeWorldDestroys;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config | Spawned", SaveGame)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config | Spawned", SaveGame)
 		bool bLoadAndSaveSpawnedActor;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config | Spawned", SaveGame)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config | Spawned", SaveGame)
 		bool bManualLoad;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config | Spawned", SaveGame, meta = (DisplayName = "Manual Load Key (Unique)"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config | Spawned", SaveGame, meta = (DisplayName = "Manual Load Key (Unique)"))
 		FString ManualLoadKey;
 	
 
 private:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Info", meta = (AllowPrivateAccess))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info", meta = (AllowPrivateAccess))
 		bool bActorPlacedInWorld;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Info", meta = (AllowPrivateAccess))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info", meta = (AllowPrivateAccess))
 		FString MapKey;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Info", meta = (AllowPrivateAccess))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info", meta = (AllowPrivateAccess))
 		bool bIsLoaded;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Info", meta = (AllowPrivateAccess))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info", meta = (AllowPrivateAccess))
 		bool bIsSaved;
 
 	

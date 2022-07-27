@@ -62,24 +62,37 @@ public:
 	FORCEINLINE bool IsLoadedFromCheckpoint() const;
 
 
-	// Loads an saves object from/to CurrentLevel
+	// Loads, saves and deletes object from/to CurrentLevel
 	UFUNCTION(BlueprintCallable, Category = "AutoSaveSubsystem")
 		void LoadObjectFromThisLevel(UObject* Object, const FString MapKey);
 	UFUNCTION(BlueprintCallable, Category = "AutoSaveSubsystem")
 		void SaveObjectToThisLevel(UObject* Object, const FString MapKey);
+	UFUNCTION(BlueprintCallable, Category = "AutoSaveSubsystem")
+		bool DeleteSavedObjectDataFromThisLevel(const FString MapKey);
 
 
-	// Loads an saves actor from/to CurrentLevel
+	// Loads, saves and deletes actor from/to CurrentLevel
 	UFUNCTION(BlueprintCallable, Category = "AutoSaveSubsystem")
 		void LoadActorFromThisLevel(AActor* Actor, const FString MapKey);
 	UFUNCTION(BlueprintCallable, Category = "AutoSaveSubsystem")
 		void SaveActorToThisLevel(AActor* Actor, const FString MapKey);
+	UFUNCTION(BlueprintCallable, Category = "AutoSaveSubsystem")
+		bool DeleteSavedActorDataFromThisLevel(const FString MapKeyIfNonAutoSaveActor = TEXT(""));
 
 
 	// Wrapper function around UAutoSaveGame::ManualLoadSpawnedAutoSaveActor
 	UFUNCTION(BlueprintCallable, Category = "AutoSaveSubsystem")
 		AActor* ManualLoadSpawnedAutoSaveActor(FString ManualLoadKey, bool& bSuccess);
 
+
+	// Function that deletes save slot from disk
+	UFUNCTION(BlueprintCallable, Category = "AutoSaveSubsystem")
+		bool DeleteSaveSlot(const FString SlotName, const FString WorldName, const bool bIsCheckpoint = false, const FString CheckpointSlotName = TEXT(""));
+
+
+	// Function that deletes actors data from this level
+	UFUNCTION(BlueprintCallable, Category = "AutoSaveSubsystem")
+		bool DeleteSavedAutoSaveActorDataFromThisLevel(const AActor* Actor);
 	
 
 	

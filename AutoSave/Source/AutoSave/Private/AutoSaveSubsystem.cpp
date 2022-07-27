@@ -1,4 +1,6 @@
 #include "AutoSaveSubsystem.h"
+
+#include "AutoSaveComponent.h"
 #include "AutoSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -254,6 +256,12 @@ void UAutoSaveSubsystem::SaveObjectToThisLevel(UObject* Object, const FString Ma
 	SaveGameObject->SaveObjectWithKey(Object, MapKey);
 }
 
+// Delete an objects data from CurrentLevel
+bool UAutoSaveSubsystem::DeleteSavedObjectDataFromThisLevel(const FString MapKey)
+{
+	return SaveGameObject->SavedObjects.Find(MapKey) ? SaveGameObject->SavedObjects.Remove(MapKey) > 0 : false;
+}
+
 
 
 // Loads an Actor which saved to CurrentLevel
@@ -273,4 +281,33 @@ void UAutoSaveSubsystem::SaveActorToThisLevel(AActor* Actor, const FString MapKe
 		return;
 
 	SaveGameObject->SaveActorWithKey(Actor, MapKey);
+}
+
+// Delete an actors data from CurrentLevel
+bool UAutoSaveSubsystem::DeleteSavedActorDataFromThisLevel(const FString MapKeyIfNonAutoSaveActor)
+{
+	return SaveGameObject->SavedObjects.Find(MapKeyIfNonAutoSaveActor) ? SaveGameObject->SavedObjects.Remove(MapKeyIfNonAutoSaveActor) > 0 : false;
+}
+
+
+
+
+
+bool UAutoSaveSubsystem::DeleteSaveSlot(const FString SlotName, const FString WorldName, const bool bIsCheckpoint, const FString CheckpointSlotName)
+{
+	return UGameplayStatics::DeleteGameInSlot(bIsCheckpoint? SlotName + DOT + WorldName + DOT + CheckpointSlotName : SlotName + DOT + WorldName, 0);
+}
+
+
+bool UAutoSaveSubsystem::DeleteSavedAutoSaveActorDataFromThisLevel(const AActor* Actor)
+{
+	const UAutoSaveComponent* AutoSaveComponent = Actor->FindComponentByClass<UAutoSaveComponent>();
+	
+	if(!IsValid(AutoSaveComponent))
+		return false;
+
+	if(AutoSaveComponent->bActorPlacedInWorld)
+		return SaveGameObject->AutoSavedObjects.Find(AutoSaveComponent->MapKey + DOT + AutoSaveComponent->GetName()) ? SaveGameObject->AutoSavedObjects.Remove(AutoSaveComponent->MapKey + DOT + AutoSaveComponent->GetName()) > 0 : false;
+
+	return SaveGameObject->SavedSpawnedActorsAutoLoad.Find(FSpawnedActorData(Actor))? SaveGameObject->SavedSpawnedActorsAutoLoad.Remove(FSpawnedActorData(Actor)) > 0 : false;
 }

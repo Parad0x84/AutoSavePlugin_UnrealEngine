@@ -6,6 +6,28 @@
 #define DOT TEXT(".")
 
 
+FSpawnedActorData::FSpawnedActorData(const AActor* Actor)
+{
+	const UAutoSaveComponent* AutoSaveComponent = Actor->FindComponentByClass<UAutoSaveComponent>();
+	
+	if((!IsValid(AutoSaveComponent)))
+		return;
+
+	ActorName = Actor->GetName();
+	ActorClass = Actor->GetClass();
+	ActorTransform = Actor->GetTransform();
+	bLoadAndSaveOtherComponents = AutoSaveComponent->bLoadAndSaveOtherComponents;
+	AutoLoadGroup = AutoSaveComponent->AutoLoadGroup;
+}
+
+FSpawnedActorData::FSpawnedActorData(const FAutoSaveActor AutoSaveActor)
+{
+	ActorName = AutoSaveActor.Actor->GetName();
+	ActorClass = AutoSaveActor.Actor->GetClass();
+	ActorTransform = AutoSaveActor.Actor->GetTransform();
+	bLoadAndSaveOtherComponents = AutoSaveActor.AutoSaveComponent->bLoadAndSaveOtherComponents;
+	AutoLoadGroup = AutoSaveActor.AutoSaveComponent->AutoLoadGroup;
+}
 
 void UAutoSaveGame::LoadAutoSaveActor(FAutoSaveActor AutoSaveActor)
 {
@@ -14,7 +36,7 @@ void UAutoSaveGame::LoadAutoSaveActor(FAutoSaveActor AutoSaveActor)
 	
 	// Notify PreLoad & load actor
 	AutoSaveActor.AutoSaveComponent->OnActorPreLoad.Broadcast();
-	LoadObjectInternal(AutoSaveActor.Actor, AutoSaveActor.AutoSaveComponent->MapKey, &AutoSavedObjects);
+	AutoSaveActor.AutoSaveComponent->bIsLoaded = LoadObjectInternal(AutoSaveActor.Actor, AutoSaveActor.AutoSaveComponent->MapKey, &AutoSavedObjects);
 
 	
 	// If requested we load all components. If it's not requested we only load AutoSaveComponent
@@ -33,7 +55,6 @@ void UAutoSaveGame::LoadAutoSaveActor(FAutoSaveActor AutoSaveActor)
 	}
 	
 	// Notify PostLoad
-	AutoSaveActor.AutoSaveComponent->bIsLoaded = true;
 	AutoSaveActor.AutoSaveComponent->OnActorPostLoad.Broadcast();
 }
 
@@ -138,7 +159,7 @@ void UAutoSaveGame::AutoLoadAllAutoSaveActorsCheap(TArray<FAutoSaveActor>* AutoS
 	{
 		// Notify PreLoad & load actor
 		AutoSaveActor.AutoSaveComponent->OnActorPreLoad.Broadcast();
-		LoadObjectInternal(AutoSaveActor.Actor, AutoSaveActor.AutoSaveComponent->MapKey, &AutoSavedObjects);
+		AutoSaveActor.AutoSaveComponent->bIsLoaded = LoadObjectInternal(AutoSaveActor.Actor, AutoSaveActor.AutoSaveComponent->MapKey, &AutoSavedObjects);
 
 		
 		// If requested we load all components. If it's not requested we only load AutoSaveComponent
@@ -157,7 +178,6 @@ void UAutoSaveGame::AutoLoadAllAutoSaveActorsCheap(TArray<FAutoSaveActor>* AutoS
 		}
 
 		// Notify PostLoad
-		AutoSaveActor.AutoSaveComponent->bIsLoaded = true;
 		AutoSaveActor.AutoSaveComponent->OnActorPostLoad.Broadcast();
 	}
 
@@ -250,11 +270,7 @@ void UAutoSaveGame::AutoSaveAllAutoSaveActorsCheap(TArray<FAutoSaveActor>* AutoS
 	// SpawnedAutoSaveActors
 	for(const FAutoSaveActor& SpawnedAutoSaveActor : *SavedSpawnedActorsAutoSaveCheap)
 	{
-		FSpawnedActorData SpawnedActorData;
-		SpawnedActorData.ActorClass = SpawnedAutoSaveActor.Actor->GetClass();
-		SpawnedActorData.ActorTransform = SpawnedAutoSaveActor.Actor->GetTransform();
-		SpawnedActorData.bLoadAndSaveOtherComponents = SpawnedAutoSaveActor.AutoSaveComponent->bLoadAndSaveOtherComponents;
-		SpawnedActorData.AutoLoadGroup = SpawnedAutoSaveActor.AutoSaveComponent->AutoLoadGroup;
+		FSpawnedActorData SpawnedActorData(SpawnedAutoSaveActor);
 
 		// Notify PreSave & save actor
 		SpawnedAutoSaveActor.AutoSaveComponent->OnActorPreSave.Broadcast();
@@ -338,7 +354,7 @@ void UAutoSaveGame::AutoLoadAllAutoSaveActorsExpensive(TArray<FAutoSaveActor>* A
 	// AutoSaveActors
 	for(const FAutoSaveActor& AutoSaveActor : *AutoSaveActorArrayExpensive)
 	{
-		LoadObjectInternal(AutoSaveActor.Actor, AutoSaveActor.AutoSaveComponent->MapKey, &AutoSavedObjects);
+		AutoSaveActor.AutoSaveComponent->bIsLoaded = LoadObjectInternal(AutoSaveActor.Actor, AutoSaveActor.AutoSaveComponent->MapKey, &AutoSavedObjects);
 
 		
 		// If requested we load all components. If it's not requested we only load AutoSaveComponent
@@ -390,7 +406,6 @@ void UAutoSaveGame::AutoLoadAllAutoSaveActorsExpensive(TArray<FAutoSaveActor>* A
 	for(const FAutoSaveActor& AutoSaveActor : *AutoSaveActorArrayExpensive)
 	{
 		// Notify PostLoad
-		AutoSaveActor.AutoSaveComponent->bIsLoaded = true;
 		AutoSaveActor.AutoSaveComponent->OnActorPostLoad.Broadcast();
 	}
 	
@@ -495,11 +510,7 @@ void UAutoSaveGame::AutoSaveAllAutoSaveActorsExpensive(TArray<FAutoSaveActor>* A
 		SpawnedAutoSaveActor.AutoSaveComponent->OnActorPostSave.Broadcast();
 
 		
-		FSpawnedActorData SpawnedActorData;
-		SpawnedActorData.ActorClass = SpawnedAutoSaveActor.Actor->GetClass();
-		SpawnedActorData.ActorTransform = SpawnedAutoSaveActor.Actor->GetTransform();
-		SpawnedActorData.bLoadAndSaveOtherComponents = SpawnedAutoSaveActor.AutoSaveComponent->bLoadAndSaveOtherComponents;
-		SpawnedActorData.AutoLoadGroup = SpawnedAutoSaveActor.AutoSaveComponent->AutoLoadGroup;
+		FSpawnedActorData SpawnedActorData(SpawnedAutoSaveActor);
 
 		
 		// Save data to proper array based on ManualLoad flag

@@ -26,6 +26,12 @@ public:
 	void LoadFromMemory(UObject* Object) const;
 	static FObjectSaveRecord SaveToMemory(UObject* Object);
 
+	
+	bool operator==(const FObjectSaveRecord& OtherRecord) const
+	{
+		return Data == OtherRecord.Data;
+	}
+
 private:
 	UPROPERTY()
 		TArray<uint8> Data;
@@ -41,8 +47,24 @@ class AUTOSAVE_API USaveGameBase : public USaveGame
 
 protected:
 	// Internal functions to load & save object
-	FORCEINLINE void LoadObjectInternal(UObject* Object, const FString MapKey, TMap<FString, FObjectSaveRecord>* MapToLoadFrom) const;
-	FORCEINLINE void SaveObjectInternal(UObject* Object, const FString MapKey, TMap<FString, FObjectSaveRecord>* MapToSaveTo) const;
+	FORCEINLINE bool LoadObjectInternal(UObject* Object, const FString MapKey, TMap<FString, FObjectSaveRecord>* MapToLoadFrom) const
+	{
+		// If TMap doesn't contains data, we shouldn't try to load it
+		if(!MapToLoadFrom->Contains(MapKey))
+			return false;
+
+		// Loading object
+		const FObjectSaveRecord* Record = MapToLoadFrom->Find(MapKey);
+		Record->LoadFromMemory(Object);
+		return true;
+	}
+
+	FORCEINLINE void SaveObjectInternal(UObject* Object, const FString MapKey, TMap<FString, FObjectSaveRecord>* MapToSaveTo) const
+	{
+		// Saving object
+		const FObjectSaveRecord Record = FObjectSaveRecord::SaveToMemory(Object);
+		MapToSaveTo->Add(MapKey, Record);
+	}
 
 	// TMap to store saved objects data
 	UPROPERTY()

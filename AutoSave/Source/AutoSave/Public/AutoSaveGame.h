@@ -13,6 +13,13 @@ struct FSpawnedActorData
 {
 	GENERATED_BODY()
 
+	FSpawnedActorData() = default;
+	explicit FSpawnedActorData(const AActor* Actor);
+	explicit FSpawnedActorData(const FAutoSaveActor AutoSaveActor);
+
+	UPROPERTY()
+		FString ActorName;
+
 	UPROPERTY()
 		EAutoSaveGroup AutoLoadGroup;
 
@@ -28,6 +35,12 @@ struct FSpawnedActorData
 		bool bLoadAndSaveOtherComponents;
 	UPROPERTY()
 		TMap<FString, FObjectSaveRecord> ComponentData;
+
+
+	bool operator==(const FSpawnedActorData& OtherData) const
+	{
+		return ActorName == OtherData.ActorName && AutoLoadGroup == OtherData.AutoLoadGroup && ActorData == OtherData.ActorData && ActorClass == OtherData.ActorClass && ActorTransform.Equals(OtherData.ActorTransform);
+	}
 };
 
 

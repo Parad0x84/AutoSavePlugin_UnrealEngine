@@ -50,29 +50,6 @@ FObjectSaveRecord FObjectSaveRecord::SaveToMemory(UObject* Object)
 
 
 
-void USaveGameBase::LoadObjectInternal(UObject* Object, const FString MapKey, TMap<FString, FObjectSaveRecord>* MapToLoadFrom) const
-{
-	// If TMap doesn't contains data, we shouldn't try to load it
-	if(!MapToLoadFrom->Contains(MapKey))
-		return;
-
-	// Loading object
-	const FObjectSaveRecord* Record = MapToLoadFrom->Find(MapKey);
-	Record->LoadFromMemory(Object);
-}
-
-
-void USaveGameBase::SaveObjectInternal(UObject* Object, const FString MapKey, TMap<FString, FObjectSaveRecord>* MapToSaveTo) const
-{
-	// Saving object
-	const FObjectSaveRecord Record = FObjectSaveRecord::SaveToMemory(Object);
-	MapToSaveTo->Add(MapKey, Record);
-}
-
-
-
-
-
 void USaveGameBase::LoadObject(UObject* Object)
 {
 	if(IsValid(Object))

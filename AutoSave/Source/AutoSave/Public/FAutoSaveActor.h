@@ -44,7 +44,7 @@ struct FAutoSaveActor
 
 
 
-	bool operator==(const FAutoSaveActor OtherAutoSaveActor) const
+	bool operator==(const FAutoSaveActor& OtherAutoSaveActor) const
 	{
 		return Actor == OtherAutoSaveActor.Actor;
 	}
